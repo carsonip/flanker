@@ -75,7 +75,9 @@ class Stream(object):
             self._body = decode_body(
                 self.content_type,
                 self.headers.get('Content-Transfer-Encoding', CTE).value,
-                self.stream.read(self.end - self._body_start + 1))
+                self.stream.read(self.end - self._body_start + 1),
+                self.headers.get('Content-Disposition', WithParams(None)).value == 'attachment'
+            )
 
     def _set_body(self, value):
         if value != self._body:
@@ -569,9 +571,13 @@ class MimePart(RichPartMixin):
                 self.enclosed.to_stream(out)
 
 
-def decode_body(content_type, content_encoding, body):
+def decode_body(content_type, content_encoding, body, no_decode_charset=False):
     # decode the transfer encoding
     body = decode_transfer_encoding(content_encoding, body)
+
+    # sometimes we don't want to decode charset (e.g. when it is an attachment)
+    if no_decode_charset:
+        return body
 
     # decode the charset next
     return decode_charset(content_type, body)
