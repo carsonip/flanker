@@ -233,7 +233,10 @@ class RichPartMixin(object):
 
     @property
     def subject(self):
-        return _guess_and_convert(self.headers.get('Subject', ''))
+        try:
+            return _guess_and_convert(self.headers.get('Subject', ''))
+        except DecodingError:
+            return ''
 
     @property
     def clean_subject(self):

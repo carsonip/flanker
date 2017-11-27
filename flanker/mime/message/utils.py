@@ -42,7 +42,8 @@ def _guess_and_convert(value):
     try:
         return _guess_and_convert_with(value, detector=cchardet)
     except:
-        return _guess_and_convert_with(value, detector=chardet)
+        raise
+        # return _guess_and_convert_with(value, detector=chardet)
 
 
 def _make_unicode(value, charset=None):
