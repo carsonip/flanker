@@ -17,6 +17,7 @@ from flanker.mime.message.headers import (WithParams, ContentType, MessageId,
                                           Subject)
 from flanker.mime.message.headers.parametrized import fix_content_type
 from flanker.mime.message.errors import EncodingError, DecodingError
+from flanker.mime.message.utils import _guess_and_convert
 from flanker.utils import is_pure_ascii
 
 
@@ -232,7 +233,7 @@ class RichPartMixin(object):
 
     @property
     def subject(self):
-        return self.headers.get('Subject', '')
+        return _guess_and_convert(self.headers.get('Subject', ''))
 
     @property
     def clean_subject(self):
