@@ -26,14 +26,16 @@ def _translate_charset(charset):
     if 'koi8-r' in charset.lower():
         return 'koi8_r'
 
+    # gb18030 is backward compatible
+    # use gb18030 for all gb family
     if 'gb2312' in charset.lower():
-        return 'gb2312'
-
-    if 'gb18030' in charset.lower():
         return 'gb18030'
 
     if 'gbk' in charset.lower():
-        return 'gbk'
+        return 'gb18030'
+
+    if 'gb18030' in charset.lower():
+        return 'gb18030'
 
     if 'utf-8' in charset.lower() or charset.lower() == 'x-unknown':
         return 'utf-8'
