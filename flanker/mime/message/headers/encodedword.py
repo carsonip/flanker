@@ -25,11 +25,11 @@ def unfold(value):
     return re.sub(foldingWhiteSpace, r"\2", value)
 
 
-def decode(header, mimepart_charset=None):
-    return mime_to_unicode(header, mimepart_charset)
+def decode(header):
+    return mime_to_unicode(header)
 
 
-def mime_to_unicode(header, mimepart_charset=None):
+def mime_to_unicode(header):
     """
     Takes a header value and returns a fully decoded unicode string.
     It differs from standard Python's mail.header.decode_header() because:
@@ -71,7 +71,7 @@ def mime_to_unicode(header, mimepart_charset=None):
                     (acc_str_encoding is not None and acc_str_encoding != match.group('encoding').lower()):
                         raise errors.DecodingDataCorruptionError()
                 charset, value = decode_part(
-                    match.group('charset').lower() if match.group('charset') else mimepart_charset,
+                    match.group('charset').lower(),
                     match.group('encoding').lower(),
                     acc_str+match.group('encoded') if len(acc_str) > 0 else match.group('encoded'))
                 try:
