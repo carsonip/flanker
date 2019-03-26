@@ -12,7 +12,7 @@ from flanker.mime.message import charsets, errors
 log = logging.getLogger(__name__)
 
 #deal with unfolding
-foldingWhiteSpace = re.compile(r"(\n\r?|\r\n?)(\s*)")
+_RE_FOLDING_WHITE_SPACES = re.compile(r"(?:\n\r?|\r\n?)")
 
 
 def unfold(value):
@@ -22,7 +22,7 @@ def unfold(value):
     treated in its unfolded form for further syntactic and semantic
     evaluation.
     """
-    return re.sub(foldingWhiteSpace, r"\2", value)
+    return _RE_FOLDING_WHITE_SPACES.sub('', value)
 
 
 def decode(header):
