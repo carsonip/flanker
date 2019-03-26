@@ -159,23 +159,28 @@ def p_error(p):
 
 log.info('building mailbox parser')
 mailbox_parser = yacc.yacc(
-    start='mailbox', errorlog=log, outputdir='/etc/inboxapp/')
+    start='mailbox', errorlog=log, debug=False,
+    tabmodule='mailbox_parsetab')
 
 log.info('building addr_spec parser')
 addr_spec_parser = yacc.yacc(
-    start='addr_spec', errorlog=log, outputdir='/etc/inboxapp/')
+    start='addr_spec', errorlog=log, debug=False,
+    tabmodule='addr_spec_parsetab')
 
 log.info('building url parser')
 url_parser = yacc.yacc(
-    start='url', errorlog=log, outputdir='/etc/inboxapp/')
+    start='url', errorlog=log, debug=False,
+    tabmodule='url_parsetab')
 
 log.info('building mailbox_or_url parser')
 mailbox_or_url_parser = yacc.yacc(
-    start='mailbox_or_url', errorlog=log, outputdir='/etc/inboxapp/')
+    start='mailbox_or_url', errorlog=log, debug=False,
+    tabmodule='mailbox_or_url_parsetab')
 
 log.info('building mailbox_or_url_list parser')
 mailbox_or_url_list_parser = yacc.yacc(
-    start='mailbox_or_url_list', errorlog=log, outputdir='/etc/inboxapp/')
+    start='mailbox_or_url_list', errorlog=log, debug=False,
+    tabmodule='mailbox_or_url_list_parsetab')
 
 
 # Interactive prompt for easy debugging
