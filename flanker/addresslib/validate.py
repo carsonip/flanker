@@ -35,7 +35,7 @@ Public Functions in flanker.addresslib.validate module:
 import socket
 import time
 
-import regex as re
+import re
 from logging import getLogger
 
 from flanker.addresslib import corrector

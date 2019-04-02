@@ -1,5 +1,5 @@
 import string
-import regex
+import re
 from collections import deque
 from flanker.mime.message.headers import encodedword, parametrized
 from flanker.mime.message.headers.wrappers import ContentType, WithParams
@@ -52,7 +52,7 @@ def is_empty(line):
     return line in ('\r\n', '\r', '\n')
 
 
-RE_HEADER = regex.compile(r'^([\040-\071\073-\176]+\s?:|[\t ])')
+RE_HEADER = re.compile(r'^([\040-\071\073-\176]+\s?:|[\t ])')
 
 
 def split(fp):
