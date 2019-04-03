@@ -53,7 +53,7 @@ def _make_unicode(value, charset=None):
     try:
         value = value.decode(charset, "strict")
     except UnicodeError as e:
-        if e.reason == "unexpected end of data":
+        if e.reason == "unexpected end of data" or e.reason == 'invalid utf-8':
             raise errors.DecodingDataCorruptionError()
 
         value = _guess_and_convert(value)
