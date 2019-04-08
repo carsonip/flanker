@@ -46,60 +46,35 @@ def mime_to_unicode(header):
     if not isinstance(header, basestring):
         return header
 
+
     try:
         header = unfold(header)
         decoded = []  # decoded parts
 
-        acc_str = ''
-        acc_str_charset = None
-        acc_str_encoding = None
         while header:
             match = encodedWord.search(header)
-            if match:
-                start = match.start()
-                if start != 0:
-                    # decodes unencoded ascii part to unicode
-                    value = charsets.convert_to_unicode(ascii, header[0:start])
-                    if value.strip():
-                        if acc_str:
-                            raise errors.DecodingDataCorruptionError()
-
-                        decoded.append(value)
-
-                # decode a header =?...?= of encoding
-                if (acc_str_charset is not None and acc_str_charset != match.group('charset').lower()) or \
-                    (acc_str_encoding is not None and acc_str_encoding != match.group('encoding').lower()):
-                        raise errors.DecodingDataCorruptionError()
-                charset, value = decode_part(
-                    match.group('charset').lower(),
-                    match.group('encoding').lower(),
-                    acc_str+match.group('encoded') if len(acc_str) > 0 else match.group('encoded'))
-                try:
-                    decode_str = charsets.convert_to_unicode(charset, value)
-                except errors.DecodingDataCorruptionError as e:
-                    acc_str += match.group('encoded')
-                    acc_str_charset = match.group('charset').lower()
-                    acc_str_encoding = match.group('encoding').lower()
-                    header = header[match.end():]
-                    continue
-
-                acc_str = ''
-                acc_str_charset = None
-                acc_str_encoding = None
-                decoded.append(decode_str)
-                header = header[match.end():]
-            else:
-                # no match? append the remainder
-                # of the string to the list of chunks
-                if acc_str:
-                    raise errors.DecodingDataCorruptionError()
-                decoded.append(charsets.convert_to_unicode(ascii, header))
+            if not match:
+                # Append the remainder of the string to the list of chunks.
+                decoded.append((header, 'ascii'))
                 break
 
-        if acc_str:
-            raise errors.DecodingDataCorruptionError()
+            start = match.start()
+            if start != 0:
+                # decodes unencoded ascii part to unicode
+                value = header[0:start]
+                if value.strip():
+                    decoded.append((value, 'ascii'))
+            # decode a header =?...?= of encoding
+            charset, value = decode_part(match.group('charset').lower(),
+                                         match.group('encoding').lower(),
+                                         match.group('encoded'))
+            if decoded and decoded[-1][1] == charset:
+                decoded[-1] = (decoded[-1][0]+value, charset)
+            else:
+                decoded.append((value, charset))
+            header = header[match.end():]
 
-        return u"".join(decoded)
+        return u"".join(charsets.convert_to_unicode(c, v) for v, c in decoded)
     except Exception:
         try:
             logged_header = header
@@ -123,8 +98,7 @@ def decode_acc_str(acc_str, acc_charset, encoding):
 
 ascii = 'ascii'
 
-#this spec refers to
-#http://tools.ietf.org/html/rfc2047
+# This spec refers to http://tools.ietf.org/html/rfc2047
 encodedWord = re.compile(r'''(?P<encodedWord>
   =\?                  # literal =?
   (?P<charset>[^?]*?)  # non-greedy up to the next ? is the charset

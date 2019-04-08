@@ -52,12 +52,7 @@ def _make_unicode(value, charset=None):
     charset = charset or "utf-8"
     try:
         value = value.decode(charset, "strict")
-    except UnicodeError as e:
-        if e.reason == "unexpected end of data":
-            raise errors.DecodingDataCorruptionError()
-
-        value = _guess_and_convert(value)
-    except LookupError as e:
+    except (UnicodeError, LookupError):
         value = _guess_and_convert(value)
 
     return value
